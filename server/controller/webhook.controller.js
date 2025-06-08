@@ -16,7 +16,7 @@ export const handleWebhook = async (req, res) => {
 
     const intent = body.queryResult.intent.displayName;
     const parameters = body.queryResult.parameters;
-    const { licenseType, age } = parameters;
+    const { licenseType, age, location } = parameters;
     const userMessage = body.queryResult.queryText;
     const sessionId = body.session?.split("/").pop();
 
@@ -53,6 +53,7 @@ export const handleWebhook = async (req, res) => {
       parameters: {
         licenseType: licenseType.toString(),
         age: age.toString(),
+        location: location.toString(),
       },
       triggeredEvent,
       responseMessage,
