@@ -47,9 +47,9 @@ export const handleWebhook = async (req, res) => {
     }
 
     await convoModel.create({
-      sessionId,
+      // sessionId,
       intentName: intent,
-      userMessage,
+      // userMessage,
       parameters: {
         licenseType: licenseType.toString(),
         age: age.toString(),
