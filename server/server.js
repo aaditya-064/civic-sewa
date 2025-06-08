@@ -11,6 +11,7 @@ import hookRouter from "./router/webhook.routes.js";
 var whitelist = [
   "http://localhost:5173",
   "https://dialogflow.googleapis.com",
+  "https://civic-sewa.onrender.com",
   null,
 ];
 var corsOptions = {
