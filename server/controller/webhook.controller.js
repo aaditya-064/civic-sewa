@@ -14,8 +14,8 @@ export const handleWebhook = async (req, res) => {
   try {
     const body = req.body;
 
-    const intent =
-      body?.queryResult?.intent?.displayName || "CheckLicenseIntent";
+    // const intent =
+    // body?.queryResult?.intent?.displayName || "CheckLicenseIntent";
     const parameters = body?.queryResult?.parameters;
     const { licenseType, age, location } = parameters;
     const userMessage = body?.queryResult?.queryText;
@@ -25,32 +25,30 @@ export const handleWebhook = async (req, res) => {
     let triggeredEvent = "";
     console.log(intent);
 
-    if (intent === "CheckLicenseIntent") {
-      const eligible = checkEligibility(licenseType, Number(age));
-      console.log(eligible);
+    const eligible = checkEligibility(licenseType, Number(age));
+    console.log(eligible);
 
-      if (eligible) {
-        triggeredEvent = "trigger_success";
-        responseMessage = `You are eligible for a ${licenseType} license.`;
-      } else {
-        triggeredEvent = "trigger_fail";
-        responseMessage = `You are not eligible for a ${licenseType} license.`;
-      }
-      console.log(licenseType, age, location);
-
-      res.json({
-        followupEventInput: {
-          name: triggeredEvent,
-          languageCode: "en",
-          parameters: {
-            licenseType,
-            age,
-            location,
-          },
-        },
-      });
-      return;
+    if (eligible) {
+      triggeredEvent = "trigger_success";
+      responseMessage = `You are eligible for a ${licenseType} license.`;
+    } else {
+      triggeredEvent = "trigger_fail";
+      responseMessage = `You are not eligible for a ${licenseType} license.`;
     }
+    console.log(licenseType, age, location);
+
+    res.json({
+      followupEventInput: {
+        name: triggeredEvent,
+        languageCode: "en",
+        parameters: {
+          licenseType,
+          age,
+          location,
+        },
+      },
+    });
+    return;
 
     await convoModel.create({
       intentName: intent,
