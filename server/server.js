@@ -8,7 +8,11 @@ import cors from "cors";
 import authRouter from "./router/auth.routes.js";
 import hookRouter from "./router/webhook.routes.js";
 
-var whitelist = ["http://localhost:5173", null];
+var whitelist = [
+  "http://localhost:5173",
+  "https://dialogflow.googleapis.com",
+  null,
+];
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -27,11 +31,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(morgan("dev"));
+
+// Mount routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/hook", hookRouter);
 
+// Health check endpoint
 app.get("/", (req, res) => {
-  res.send("hello from this server");
+  res.send("Server is running");
 });
 
 db.then(() => {
