@@ -4,15 +4,15 @@ const convoSchema = new mongoose.Schema(
   {
     sessionId: {
       type: String,
-      required: true,
+      // required: true,
     },
     intentName: {
       type: String,
-      required: true,
+      // required: true,
     },
     userMessage: {
       type: String,
-      required: true,
+      // required: true,
     },
     parameters: {
       licenseType: {
