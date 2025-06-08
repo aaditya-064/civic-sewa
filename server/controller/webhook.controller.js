@@ -14,11 +14,12 @@ export const handleWebhook = async (req, res) => {
   try {
     const body = req.body;
 
-    const intent = body.queryResult.intent.displayName;
-    const parameters = body.queryResult.parameters;
+    const intent =
+      body?.queryResult?.intent?.displayName || "CheckLicenseIntent";
+    const parameters = body?.queryResult?.parameters;
     const { licenseType, age, location } = parameters;
-    const userMessage = body.queryResult.queryText;
-    const sessionId = body.session?.split("/").pop();
+    const userMessage = body?.queryResult?.queryText;
+    const sessionId = body?.session?.split("/").pop();
 
     let responseMessage = "";
     let triggeredEvent = "";
@@ -41,9 +42,11 @@ export const handleWebhook = async (req, res) => {
           parameters: {
             licenseType,
             age,
+            location,
           },
         },
       });
+      return;
     }
 
     await convoModel.create({
@@ -51,9 +54,9 @@ export const handleWebhook = async (req, res) => {
       intentName: intent,
       // userMessage,
       parameters: {
-        licenseType: licenseType.toString(),
-        age: age.toString(),
-        location: location.toString(),
+        licenseType: licenseType,
+        age: age?.String(),
+        location: location,
       },
       triggeredEvent,
       responseMessage,
