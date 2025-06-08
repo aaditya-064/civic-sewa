@@ -7,7 +7,7 @@ const checkEligibility = (licenseType, age) => {
   return false;
 };
 
-const projectId = "civic-sewa-wfnn"; // your Dialogflow project id
+const projectId = "civic-sewa-wfnn";
 const sessionClient = new dialogflow.SessionsClient();
 
 export const handleWebhook = async (req, res) => {
@@ -67,7 +67,9 @@ export const handleWebhook = async (req, res) => {
 
 export const apiDialogflow = async (req, res) => {
   try {
-    const { message, sessionId } = req.body;
+    const { queryInput, sessionId } = req.body;
+    if (!sessionId) return res.status(400).send("Session ID required");
+
     const sessionPath = sessionClient.projectAgentSessionPath(
       projectId,
       sessionId
@@ -75,25 +77,19 @@ export const apiDialogflow = async (req, res) => {
 
     const request = {
       session: sessionPath,
-      queryInput: {
-        text: {
-          text: message,
-          languageCode: "en-US",
-        },
-      },
+      queryInput,
     };
 
     const responses = await sessionClient.detectIntent(request);
     const result = responses[0].queryResult;
 
     res.json({
-      reply: result.fulfillmentText,
-      intent: result.intent ? result.intent.displayName : null,
+      fulfillmentText: result.fulfillmentText,
+      parameters: result.parameters,
+      intent: result.intent.displayName,
     });
-  } catch (err) {
-    res.status(err?.statusCode || 500).json({
-      success: false,
-      msg: err?.message || "Internal server error",
-    });
+  } catch (error) {
+    console.error("Dialogflow detectIntent error:", error);
+    res.status(500).json({ error: "Dialogflow detectIntent failed" });
   }
 };
