@@ -2,7 +2,7 @@ import convoModel from "../model/conversation.model.js";
 import dialogflow from "@google-cloud/dialogflow";
 
 const checkEligibility = (licenseType, age) => {
-  if (licenseType === "car" && age >= 18) return true;
+  if (licenseType === "scooty" && age >= 16) return true;
   if (licenseType === "bike" && age >= 16) return true;
   return false;
 };
@@ -23,9 +23,11 @@ export const handleWebhook = async (req, res) => {
 
     let responseMessage = "";
     let triggeredEvent = "";
+    console.log(intent);
 
     if (intent === "CheckLicenseIntent") {
       const eligible = checkEligibility(licenseType, Number(age));
+      console.log(eligible);
 
       if (eligible) {
         triggeredEvent = "trigger_success";
@@ -34,6 +36,7 @@ export const handleWebhook = async (req, res) => {
         triggeredEvent = "trigger_fail";
         responseMessage = `You are not eligible for a ${licenseType} license.`;
       }
+      console.log(licenseType, age, location);
 
       res.json({
         followupEventInput: {
@@ -50,9 +53,7 @@ export const handleWebhook = async (req, res) => {
     }
 
     await convoModel.create({
-      // sessionId,
       intentName: intent,
-      // userMessage,
       parameters: {
         licenseType: licenseType,
         age: age?.String(),
