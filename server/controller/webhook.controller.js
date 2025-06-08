@@ -23,7 +23,7 @@ export const handleWebhook = async (req, res) => {
 
     let responseMessage = "";
     let triggeredEvent = "";
-    console.log(intent);
+    // console.log(intent);
 
     const eligible = checkEligibility(licenseType, Number(age));
     console.log(eligible);
