@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import Login from "./pages/Auth/Login";
 import { Toaster } from "react-hot-toast";
+import ChatBot from "./pages/ChatBot";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path={"/login"} Component={Login} />
           <Route path={"/"} Component={HomePage} />
           <Route path={"/about"} Component={AboutPage} />
+          <Route path={"/chatbot"} Component={ChatBot} />
         </Routes>
       </BrowserRouter>
     </>
