@@ -64,6 +64,7 @@ export const logUser = async (req, res) => {
       user: { name: user.username, email: user.email },
     });
   } catch (err) {
+    console.log(err);
     res
       .status(err?.statusCode || 400)
       .json({ success: false, msg: err?.message });
