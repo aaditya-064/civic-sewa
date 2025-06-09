@@ -18,6 +18,7 @@ export const handleWebhook = async (req, res) => {
     // body?.queryResult?.intent?.displayName || "CheckLicenseIntent";
     const parameters = body?.queryResult?.parameters;
     const { licenseType, age, location } = parameters;
+    const ageCheck = age?.amount;
     const userMessage = body?.queryResult?.queryText;
     const sessionId = body?.session?.split("/").pop();
 
@@ -25,7 +26,7 @@ export const handleWebhook = async (req, res) => {
     let triggeredEvent = "";
     // console.log(intent);
 
-    const eligible = checkEligibility(licenseType, Number(age));
+    const eligible = checkEligibility(licenseType, Number(ageCheck));
     console.log(eligible);
 
     if (eligible) {
