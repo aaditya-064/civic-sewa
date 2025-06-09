@@ -18,8 +18,8 @@ const SignUp = () => {
 
   const Navigate = useNavigate();
 
-  // const url = "http://localhost:8080";
-  const url = "https://civic-sewa.onrender.com";
+  const url = "http://localhost:8080";
+  // const url = "https://civic-sewa.onrender.com";
 
   const [confirmPassword, setConfirmPassword] = useState("");
 
