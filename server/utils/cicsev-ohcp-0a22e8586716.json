@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "cicsev-ohcp",
+  "private_key_id": "0a22e8586716fe5f9346a3c7ff731a45ee793ccc",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC6mlH1gvNJXiyZ\n+yuggVGQ9oZvU3nWXPFAQQcATxTWcan7md8j50Uin1VqBeVDFPUTLkGO/e7SIhDS\nTyjj3pOQWYHO3YB2tQm0EChUVG30OGdpC/eR5LkubPrjK4Vx45HNxVoyB0PYVhBn\nCCmWsov2KUaNeqmBHouFC7EQYlyG6VWwC8O9oMrH4XC91YyIbGTlhn70K3uGzt8i\n47vLotksudriODTAn6iU0FjKLN6Ue8nBoy58Y9TO9xaFisZGPAP5EhI5d6rOQMz9\n9Nn+GJp7tEpLjyBmHpA9sS78lHGqZym9KR+Mx+PK5OfxLFKpKFjL6rdb+7G50cCC\nVU4t06OZAgMBAAECggEAAxTb0CBYuKgxt9w+OPERwgFUMH/yJeBUipFYVoC30R/A\n5RsCJJNj4KG9dRoCUnSE5ItxwTT/zeAKo5JzlCm/iZV0z4/4WF1+esb+h3/6bdtF\nl+Y+8R2UEkhx7zDvi/UsWffNmMBmdirbq/vmResOZSMC24DATlXNC4YpJyJcsUyf\nZkiIRvpddiWZx9JaEegeWKLAWW08j0S21PsvgV6J6c4aOvfacy9fxNqtYiy597Dg\nqkGcs1f3h15ZJfmmCSUxx3V03UAxPBh0XU+aUMWO+nrX7I0VmsLscE8JXUjlcPQR\nDNJ8Fa3KOw402lxczcIlIOhUqgAWa8hcsyiTscCv4QKBgQDoqxa5B0O5IGxNKthY\np4XLK6PGQiE6FPGTtfLkD3eCfIy5EGVWnGE0nQiNIf6i7DpPgsdNcR5p73Eo7G3d\n7SaFCg2knENNuqwcfZ10KhrxF0w3zufHE91Q7DjIWx6a8a7WxtUtOSb4TXBIzhkV\nIko/QNXfOjKChmAbrQH3Bhv1MQKBgQDNUKre8wDj4Ucl9T3sUmW+CN5KL+ugW2MY\nhbbzomAjsNK0ZrVg0rypBKAtYn4Idwg1cEpL2q5Lv1K2WP+S061+TlkX/sQCLOfI\n+uEJXnVLPRBla63+lXxlK2R9f95WfbNL84pQjQUtSTGzheZRMMcQPxnpvD+2Lh0k\ngNBUaoKa6QKBgQDA4aSyuzz/acuepVg5Fpep+IGKyCO3fMlQRNQZEGFowUv/14HL\nLVTAQzZlmbr44ZDtfWMv5gjqlV9gJ7Bk/Eakn9Lzlb+N3qTz8YboWEeBemjrExG+\nTc95WHsyTaevl4/z6V2sYebWjYv6LzFH/edDTMKAjkR1RGTETMaGPIBM4QKBgH+Y\np2iBSsdUZNwhKkeo+ZP9fPBMEbqJsO83gnitK+RiasA0qHow3ZCI0GcEM+Fc4Fwd\nmf7EO9fVYjjy3HpKVSMO2+2+pd/YOoA78gjZjDmjDIKLRgnWqwVQz1XzVqEX44rL\nIuVmjpYTS/EOwREqKDxfiuIo3MuCoxfhehdMTjipAoGBALGD3ms9qv3Q/mNMf8xc\nJQrSGluMXha4yA6R7R8FxK9tA4YksyGWuoMT0Qe5ARVaW00X2VV7wee1HVlQCILZ\n7P1F2MZPgmkU3jtEonp9ewbCX6h2eruAM2Daap14Pg34jE1/sSq/fZO7ZiYlQ9CB\nVIp392iHATxYiaQNG7rJ3aWS\n-----END PRIVATE KEY-----\n",
+  "client_email": "diagflow-api-client@cicsev-ohcp.iam.gserviceaccount.com",
+  "client_id": "108380238474497058472",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/diagflow-api-client%40cicsev-ohcp.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
