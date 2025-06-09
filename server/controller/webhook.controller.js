@@ -10,7 +10,7 @@ const checkEligibility = (licenseType, age) => {
 
 const projectId = "cicsev-ohcp";
 const sessionClient = new SessionsClient({
-  keyFilename: "./utils/cicsev-ohcp-0a22e8586716.json",
+  keyFilename: "./utils/key.json",
 });
 
 export const handleWebhook = async (req, res) => {
@@ -71,35 +71,6 @@ export const handleWebhook = async (req, res) => {
     });
   }
 };
-
-// export const apiDialogflow = async (req, res) => {
-//   try {
-//     const { queryInput, sessionId } = req.body;
-//     if (!sessionId) return res.status(400).send("Session ID required");
-
-//     const sessionPath = sessionClient.projectAgentSessionPath(
-//       projectId,
-//       sessionId
-//     );
-
-//     const request = {
-//       session: sessionPath,
-//       queryInput,
-//     };
-
-//     const responses = await sessionClient.detectIntent(request);
-//     const result = responses[0].queryResult;
-
-//     res.json({
-//       fulfillmentText: result.fulfillmentText,
-//       parameters: result.parameters,
-//       intent: result.intent.displayName,
-//     });
-//   } catch (error) {
-//     console.error("Dialogflow detectIntent error:", error);
-//     res.status(500).json({ error: "Dialogflow detectIntent failed" });
-//   }
-// };
 
 export const handleMessage = async (req, res) => {
   const { text } = req.body;

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "civicsewa-uhls",
+  "private_key_id": "a8619373b94bdeba52b78dae057a67761ee19e9a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDSt65s/FqkvXdp\nok7PDqw5cBubkBWZRzDGC3SXCFvNmz1RzGHjQmyJWukrx7BFaGjCseYphtIKl6VI\n4AUEfsKkJwic6TwZH0Owod9h9yoslRtUSw9oquKrhsFtZLWQrhQpT506q8L72BmU\n3MgWWM5g92U+YDCAfIieaUqRfgj1hZrm4OeQj4RiIlRAvgnhMkf593V0tE7UlGzt\nYDPdyLp6wpNvMs8ajPnXP4gB534GNQLktVsofcxwHbKRaxUspHzy5KBwImARhpxx\n5WGfoBDlsf181v6edm3LvvFpCtVWVs3FvY0nCBDS68/Xcbgt4IACD/ctsOFn2WWf\naifWz1VzAgMBAAECggEAHqLvHNBp+2bCrFyZWbh36Nf4Y5tE0KbNnBXBS04/TrsB\n5Nky6EBZmHTbzu43HjhKdvg3jxUXh8u5j8lmYVtuwEAem/W7M6nchRtb55nwi0/Y\ni95n7J9f2nF6wQVx8omky8bUBNpBPK2UNpUNEFa0FtwRX8rLcnrowCNt4I5zDgMt\nojZotl5Kl8rYQNRLqBC18ZAu+mj5eDiw3/iJmnvVB5wMH4KZajU0kD/03+S/9k3e\nHylxPutj5VwMIIvoryOjohYEptxW3jIm6YU9HKw9qllBd5yf7T3Z+EUiwqSTn9w5\nwFZklPU738+MDrp7vA8WrVGMFJ+tc58WlretB4rwOQKBgQD6bX7THWCCgZyqeFtX\nmIqdRwpCRebo8r6hSO7BIl1SbWOKGIffz4JykVmz/iRVEQVqJog9nayakG4KuKSO\nn/BELJtRywwNRlx/FlIoPGs6ZiBu6GZHkxVvRYNa8JaZJxjO5f0B5BbT4HmtCbEe\nejWlqBE5Sbjl0k39YK6IRkCi2QKBgQDXZ/xZ028IKV9/bDDfVGY4F2Q0hg2uEWKP\nssCHTEzirHli83uqKBxw9h3JzzG1CiWGCvWxFbb24Y4PIjAehSwwIX62QoNldw68\nCqlpnaHTyEkdm9AQa5uxRARLjvkHxOhT8ipY9R1AFto4qnY1EjrP6pKUME29TIh1\nq5OVzmDzKwKBgEsOKian9Vbn9cZ50BaO12yP8BkwziYfKtc3/qbP39xmgKDQ/Vgs\n31HrElGJ5+W+9jp8VfTxntusUe7QrDE66k3keKCpFHGeFvbX/8OjaBfWp/3VlWH6\nSUBSOy40UU6RkzPfZlb8v4K9Enq0HuudgRqnJpJe8BWhVFKOeYDKXXDxAoGAAsR5\nP4Yx5P7zFSYEsrnY3luek/Ys8tGSXJpFUvet/TOOE7FhI1yEkQb4dwFMeDD7Lm+x\nnGbVBPL86kDcMWgwmyWzBRBxs7oF3HCeoJa/34KxPcoksDFRvMNM8tORa4IiIgH4\nfVAY4hvpDdVS03e6fbVb0L+WIBp9nlVn/gK6yCUCgYEA0yAMM/r45c5N/7BW0faH\nqsYDCQOjewCGFdQkXjIA57/sk/SWh1oyZvYkoXuO2aSS9VHwV+Gbl5STFbXgAADf\nRE3XFyGjV13HFyVHpRV9M56gnf2Nqj3QEgKK+/C+ansukuf/V/krJNh4PcL9ef+L\nv2kgsodpDvnsg8Ow7k95fKU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "diagflow-api-client@civicsewa-uhls.iam.gserviceaccount.com",
+  "client_id": "116701698625890435882",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/diagflow-api-client%40civicsewa-uhls.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
