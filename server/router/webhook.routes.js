@@ -7,8 +7,7 @@ import { checkToken, isAdmin } from "../middleware/auth.middleware.js";
 
 const route = express.Router();
 
-route.post("/webhook", handleWebhook);
-route.post("/api/dialogflow", apiDialogflow);
-// route.post("/login", loginMiddleware, logUser);
+route.post("/webhook", checkToken, handleWebhook);
+route.post("/api/dialogflow", checkToken, apiDialogflow);
 
 export default route;

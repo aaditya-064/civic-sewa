@@ -14,6 +14,7 @@ var whitelist = [
   "https://civic-sewa.onrender.com",
   null,
 ];
+
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
