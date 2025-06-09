@@ -103,7 +103,7 @@ export const handleWebhook = async (req, res) => {
 
 export const handleMessage = async (req, res) => {
   const { text } = req.body;
-  const sessionId = uuid.v4();
+  const sessionId = Math.random().toString(36).substring(7);
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
     sessionId
