@@ -17,23 +17,23 @@ const convoSchema = new mongoose.Schema(
     parameters: {
       licenseType: {
         type: String,
-        required: true,
+        // required: true,
       },
       age: {
         type: String,
-        required: true,
+        // required: true,
       },
       location: {
         type: String,
-        required: true,
+        // required: true,
       },
       gender: {
         type: String,
-        required: true,
+        // required: true,
       },
       marriageStatus: {
         type: String,
-        required: true,
+        // required: true,
       },
     },
     triggeredEvent: {

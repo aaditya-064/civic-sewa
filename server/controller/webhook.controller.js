@@ -1,6 +1,12 @@
-import { MAX_ACCESS_BOUNDARY_RULES_COUNT } from "google-auth-library/build/src/auth/downscopedclient.js";
+import { SessionsClient } from "@google-cloud/dialogflow";
 import convoModel from "../model/conversation.model.js";
-import dialogflow, { SessionsClient } from "@google-cloud/dialogflow";
+import path from "path";
+
+const sessionClient = new SessionsClient({
+  keyFilename: "./utils/key.json",
+});
+
+const projectId = "cicsev-ohcp";
 
 const checkEligibility = (licenseType, age) => {
   if (licenseType === "scooty" && age >= 16) return true;
@@ -8,94 +14,121 @@ const checkEligibility = (licenseType, age) => {
   return false;
 };
 
-const projectId = "cicsev-ohcp";
-const sessionClient = new SessionsClient({
-  keyFilename: "./utils/key.json",
-});
-
 export const handleWebhook = async (req, res) => {
   try {
     const body = req.body;
+    console.log("📩 Webhook Received:", JSON.stringify(body, null, 2));
 
-    // const intent =
-    // body?.queryResult?.intent?.displayName || "CheckLicenseIntent";
-    const parameters = body?.queryResult?.parameters;
-    const { licenseType, age, location } = parameters;
-    const ageCheck = age?.amount;
-    const userMessage = body?.queryResult?.queryText;
-    const sessionId = body?.session?.split("/").pop();
+    const sessionId = body?.session?.split("/").pop() || "unknown-session";
+    const intent = body?.queryResult?.intent?.displayName || "UnknownIntent";
+    const userMessage = body?.queryResult?.queryText || "";
 
-    let responseMessage = "";
-    let triggeredEvent = "";
-    // console.log(intent);
+    const parameters = body?.queryResult?.parameters || {};
+    const licenseType = parameters?.licenseType || "unknown";
+    const ageValue = Number(parameters?.age?.amount || parameters?.age || 0);
+    const location = parameters?.location || "unknown";
+    const gender = parameters?.gender || "unknown";
 
-    const eligible = checkEligibility(licenseType, Number(ageCheck));
-    console.log(eligible);
+    console.log("➡️ Intent:", intent);
+    console.log("➡️ User Message:", userMessage);
+    console.log("➡️ Parameters:", { licenseType, ageValue, location, gender });
 
-    if (eligible) {
-      triggeredEvent = "trigger_success";
-      responseMessage = `You are eligible for a ${licenseType} license.`;
-    } else {
-      triggeredEvent = "trigger_fail";
-      responseMessage = `You are not eligible for a ${licenseType} license.`;
+    let responseMessage = "Sorry, we could not process your request.";
+    let triggeredEvent = "fallback_event";
+
+    if (licenseType && ageValue) {
+      const eligible = checkEligibility(licenseType, ageValue);
+      console.log("🎯 Eligibility:", eligible);
+
+      if (eligible) {
+        triggeredEvent = "trigger_success";
+        responseMessage = `You are eligible for a ${licenseType} license.`;
+      } else {
+        triggeredEvent = "trigger_fail";
+        responseMessage = `You are not eligible for a ${licenseType} license.`;
+      }
     }
-    console.log(licenseType, age, location);
 
-    res.json({
+    await convoModel.create({
+      sessionId,
+      intentName: intent,
+      userMessage,
+      parameters: {
+        licenseType,
+        age: String(ageValue),
+        location,
+        gender,
+      },
+      triggeredEvent,
+      responseMessage,
+    });
+
+    console.log("✅ Webhook response prepared.");
+
+    return res.json({
       followupEventInput: {
         name: triggeredEvent,
         languageCode: "en",
         parameters: {
           licenseType,
-          age,
+          age: ageValue,
           location,
+          gender,
         },
       },
     });
-    return;
-
-    await convoModel.create({
-      intentName: intent,
-      parameters: {
-        licenseType: licenseType,
-        age: age?.String(),
-        location: location,
-      },
-      triggeredEvent,
-      responseMessage,
-    });
   } catch (err) {
-    res.status(err?.statusCode || 500).json({
+    console.error("❌ Webhook Error:", err);
+    return res.status(500).json({
       success: false,
-      msg: err?.message || "Internal server error",
+      msg: err.message || "Webhook error occurred",
     });
   }
 };
 
 export const handleMessage = async (req, res) => {
-  const { text } = req.body;
-  const sessionId = Math.random().toString(36).substring(7);
-  const sessionPath = sessionClient.projectAgentSessionPath(
-    projectId,
-    sessionId
-  );
-
-  const request = {
-    session: sessionPath,
-    queryInput: {
-      text: {
-        text,
-        languageCode: "en-US",
-      },
-    },
-  };
-
   try {
+    const { text } = req.body;
+
+    if (!text) {
+      console.warn("⚠️ No message text provided");
+      return res.status(400).json({ error: "Message text is required" });
+    }
+
+    const sessionId = Math.random().toString(36).substring(7);
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      projectId,
+      sessionId
+    );
+
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text,
+          languageCode: "en-US",
+        },
+      },
+    };
+
+    console.log("📨 Sending message to Dialogflow:", text);
+
     const responses = await sessionClient.detectIntent(request);
-    const result = responses[0].queryResult;
-    res.json({ response: result.fulfillmentText });
+    const result = responses[0]?.queryResult;
+
+    console.log("📥 Dialogflow response:", JSON.stringify(result, null, 2));
+
+    const fulfillmentText =
+      result?.fulfillmentText || "Sorry, I didn’t understand that.";
+    const intentName = result?.intent?.displayName || "UnknownIntent";
+
+    return res.status(200).json({
+      response: fulfillmentText,
+      intent: intentName,
+      parameters: result?.parameters?.fields || {},
+    });
   } catch (err) {
-    console.error("Dialogflow Error:", err);
-    res.status(500).json({ error: "Dialogflow request failed" });
+    console.error("❌ Dialogflow Error:", err);
+    return res.status(500).json({ error: "Dialogflow request failed" });
   }
 };
