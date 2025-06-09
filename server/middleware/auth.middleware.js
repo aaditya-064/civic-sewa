@@ -21,7 +21,8 @@ export const registerMiddleware = async (req, res, next) => {
 export const loginMiddleware = async (req, res, next) => {
   try {
     const { phoneNumber } = req.body;
-    const user = await userModel.findOne({ phoneNumber });
+    const user = await userModel.findOne({ phoneNumber: `+977${phoneNumber}` });
+    console.log(user, phoneNumber);
     if (!user) {
       const err = new Error("User Not Found");
       err.statusCode = 404;
