@@ -30,6 +30,7 @@ export const loginMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
+    console.log(err);
     res
       .status(err?.statusCode || 400)
       .json({ success: false, err: err?.message });
