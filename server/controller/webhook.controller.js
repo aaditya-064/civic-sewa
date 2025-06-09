@@ -1,101 +1,160 @@
-import { MAX_ACCESS_BOUNDARY_RULES_COUNT } from "google-auth-library/build/src/auth/downscopedclient.js";
+import { detectIntent } from "./dialogflow.controller.js";
+import { v4 as uuidv4 } from "uuid";
 import convoModel from "../model/conversation.model.js";
-import dialogflow, { SessionsClient } from "@google-cloud/dialogflow";
 
-const checkEligibility = (licenseType, age) => {
-  if (licenseType === "scooty" && age >= 16) return true;
-  if (licenseType === "bike" && age >= 16) return true;
-  return false;
-};
-
-const projectId = "cicsev-ohcp";
-const sessionClient = new SessionsClient({
-  keyFilename: "./utils/key.json",
-});
+// Store active sessions in memory (you might want to use Redis or a database for production)
+const activeSessions = new Map();
 
 export const handleWebhook = async (req, res) => {
   try {
-    const body = req.body;
+    const { queryText, sessionId: existingSessionId } = req.body;
 
-    // const intent =
-    // body?.queryResult?.intent?.displayName || "CheckLicenseIntent";
-    const parameters = body?.queryResult?.parameters;
-    const { licenseType, age, location } = parameters;
-    const ageCheck = age?.amount;
-    const userMessage = body?.queryResult?.queryText;
-    const sessionId = body?.session?.split("/").pop();
-
-    let responseMessage = "";
-    let triggeredEvent = "";
-    // console.log(intent);
-
-    const eligible = checkEligibility(licenseType, Number(ageCheck));
-    console.log(eligible);
-
-    if (eligible) {
-      triggeredEvent = "trigger_success";
-      responseMessage = `You are eligible for a ${licenseType} license.`;
-    } else {
-      triggeredEvent = "trigger_fail";
-      responseMessage = `You are not eligible for a ${licenseType} license.`;
+    if (!queryText) {
+      return res.status(400).json({ error: "queryText is required" });
     }
-    console.log(licenseType, age, location);
 
-    res.json({
-      followupEventInput: {
-        name: triggeredEvent,
-        languageCode: "en",
+    // Use existing session ID or create a new one
+    let sessionId;
+    if (existingSessionId && activeSessions.has(existingSessionId)) {
+      sessionId = existingSessionId;
+    } else {
+      sessionId = uuidv4();
+      activeSessions.set(sessionId, {
+        createdAt: new Date(),
+        messageCount: 0,
+      });
+    }
+
+    // Update session info
+    const sessionInfo = activeSessions.get(sessionId);
+    sessionInfo.messageCount++;
+    sessionInfo.lastActivity = new Date();
+    activeSessions.set(sessionId, sessionInfo);
+
+    const result = await detectIntent(queryText, sessionId);
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
+    // Store conversation in MongoDB
+    try {
+      await convoModel.create({
+        sessionId,
+        intentName: result.response.intent,
+        userMessage: result.response.query,
+        responseMessage: result.response.response,
         parameters: {
-          licenseType,
-          age,
-          location,
+          licenseType:
+            result.response.parameters.fields?.licenseType?.stringValue || "",
+          age: result.response.parameters.fields?.age?.stringValue || "",
+          location:
+            result.response.parameters.fields?.location?.stringValue || "",
+          gender: result.response.parameters.fields?.gender?.stringValue || "",
+          marriageStatus:
+            result.response.parameters.fields?.marriageStatus?.stringValue ||
+            "",
         },
-      },
-    });
-    return;
+        triggeredEvent:
+          result.response.parameters.fields?.event?.stringValue || "",
+      });
+    } catch (dbError) {
+      console.error("Error saving conversation:", dbError);
+      // Don't throw error to client, just log it
+    }
 
-    await convoModel.create({
-      intentName: intent,
-      parameters: {
-        licenseType: licenseType,
-        age: age?.String(),
-        location: location,
-      },
-      triggeredEvent,
-      responseMessage,
+    // Clean up old sessions (older than 30 minutes)
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    for (const [sid, info] of activeSessions.entries()) {
+      if (info.lastActivity < thirtyMinutesAgo) {
+        activeSessions.delete(sid);
+      }
+    }
+
+    return res.json({
+      ...result.response,
+      sessionId,
+      messageCount: sessionInfo.messageCount,
     });
-  } catch (err) {
-    res.status(err?.statusCode || 500).json({
-      success: false,
-      msg: err?.message || "Internal server error",
-    });
+  } catch (error) {
+    console.error("Error in handleWebhook:", error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
 export const handleMessage = async (req, res) => {
-  const { text } = req.body;
-  const sessionId = Math.random().toString(36).substring(7);
-  const sessionPath = sessionClient.projectAgentSessionPath(
-    projectId,
-    sessionId
-  );
-
-  const request = {
-    session: sessionPath,
-    queryInput: {
-      text: {
-        text,
-        languageCode: "en-US",
-      },
-    },
-  };
-
   try {
-    const responses = await sessionClient.detectIntent(request);
-    const result = responses[0].queryResult;
-    res.json({ response: result.fulfillmentText });
-  } catch (err) {
-    console.error("Dialogflow Error:", err);
-    res.status(500).json({ error: "Dialogflow request failed" });
+    const { message, sessionId: existingSessionId } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "message is required" });
+    }
+
+    // Use existing session ID or create a new one
+    let sessionId;
+    if (existingSessionId && activeSessions.has(existingSessionId)) {
+      sessionId = existingSessionId;
+    } else {
+      sessionId = uuidv4();
+      activeSessions.set(sessionId, {
+        createdAt: new Date(),
+        messageCount: 0,
+      });
+    }
+
+    // Update session info
+    const sessionInfo = activeSessions.get(sessionId);
+    sessionInfo.messageCount++;
+    sessionInfo.lastActivity = new Date();
+    activeSessions.set(sessionId, sessionInfo);
+
+    const result = await detectIntent(message, sessionId);
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
+    // Store conversation in MongoDB
+    try {
+      await convoModel.create({
+        sessionId,
+        intentName: result.response.intent,
+        userMessage: result.response.query,
+        responseMessage: result.response.response,
+        parameters: {
+          licenseType:
+            result.response.parameters.fields?.licenseType?.stringValue || "",
+          age: result.response.parameters.fields?.age?.stringValue || "",
+          location:
+            result.response.parameters.fields?.location?.stringValue || "",
+          gender: result.response.parameters.fields?.gender?.stringValue || "",
+          marriageStatus:
+            result.response.parameters.fields?.marriageStatus?.stringValue ||
+            "",
+        },
+        triggeredEvent:
+          result.response.parameters.fields?.event?.stringValue || "",
+      });
+    } catch (dbError) {
+      console.error("Error saving conversation:", dbError);
+      // Don't throw error to client, just log it
+    }
+
+    // Clean up old sessions (older than 30 minutes)
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    for (const [sid, info] of activeSessions.entries()) {
+      if (info.lastActivity < thirtyMinutesAgo) {
+        activeSessions.delete(sid);
+      }
+    }
+
+    return res.json({
+      ...result.response,
+      sessionId,
+      messageCount: sessionInfo.messageCount,
+    });
+  } catch (error) {
+    console.error("Error in handleMessage:", error);
+    return res.status(500).json({ error: error.message });
   }
 };
