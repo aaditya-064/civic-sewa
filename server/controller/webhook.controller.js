@@ -1,5 +1,6 @@
+import { MAX_ACCESS_BOUNDARY_RULES_COUNT } from "google-auth-library/build/src/auth/downscopedclient.js";
 import convoModel from "../model/conversation.model.js";
-import dialogflow from "@google-cloud/dialogflow";
+import dialogflow, { SessionsClient } from "@google-cloud/dialogflow";
 
 const checkEligibility = (licenseType, age) => {
   if (licenseType === "scooty" && age >= 16) return true;
@@ -7,8 +8,10 @@ const checkEligibility = (licenseType, age) => {
   return false;
 };
 
-const projectId = "civic-sewa-wfnn";
-const sessionClient = new dialogflow.SessionsClient();
+const projectId = "cicsev-ohcp";
+const sessionClient = new SessionsClient({
+  keyFilename: "./utils/cicsev-ohcp-0a22e8586716.json",
+});
 
 export const handleWebhook = async (req, res) => {
   try {
@@ -69,31 +72,59 @@ export const handleWebhook = async (req, res) => {
   }
 };
 
-export const apiDialogflow = async (req, res) => {
+// export const apiDialogflow = async (req, res) => {
+//   try {
+//     const { queryInput, sessionId } = req.body;
+//     if (!sessionId) return res.status(400).send("Session ID required");
+
+//     const sessionPath = sessionClient.projectAgentSessionPath(
+//       projectId,
+//       sessionId
+//     );
+
+//     const request = {
+//       session: sessionPath,
+//       queryInput,
+//     };
+
+//     const responses = await sessionClient.detectIntent(request);
+//     const result = responses[0].queryResult;
+
+//     res.json({
+//       fulfillmentText: result.fulfillmentText,
+//       parameters: result.parameters,
+//       intent: result.intent.displayName,
+//     });
+//   } catch (error) {
+//     console.error("Dialogflow detectIntent error:", error);
+//     res.status(500).json({ error: "Dialogflow detectIntent failed" });
+//   }
+// };
+
+export const handleMessage = async (req, res) => {
+  const { text } = req.body;
+  const sessionId = uuid.v4();
+  const sessionPath = sessionClient.projectAgentSessionPath(
+    projectId,
+    sessionId
+  );
+
+  const request = {
+    session: sessionPath,
+    queryInput: {
+      text: {
+        text,
+        languageCode: "en-US",
+      },
+    },
+  };
+
   try {
-    const { queryInput, sessionId } = req.body;
-    if (!sessionId) return res.status(400).send("Session ID required");
-
-    const sessionPath = sessionClient.projectAgentSessionPath(
-      projectId,
-      sessionId
-    );
-
-    const request = {
-      session: sessionPath,
-      queryInput,
-    };
-
     const responses = await sessionClient.detectIntent(request);
     const result = responses[0].queryResult;
-
-    res.json({
-      fulfillmentText: result.fulfillmentText,
-      parameters: result.parameters,
-      intent: result.intent.displayName,
-    });
-  } catch (error) {
-    console.error("Dialogflow detectIntent error:", error);
-    res.status(500).json({ error: "Dialogflow detectIntent failed" });
+    res.json({ response: result.fulfillmentText });
+  } catch (err) {
+    console.error("Dialogflow Error:", err);
+    res.status(500).json({ error: "Dialogflow request failed" });
   }
 };
